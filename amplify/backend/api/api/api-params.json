@@ -2,7 +2,7 @@
     "paths": [
         {
             "name": "/grudges",
-            "lambdaFunction": "lambda",
+            "lambdaFunction": "lambdaAPI",
             "privacy": {
                 "private": true,
                 "auth": [
@@ -19,7 +19,7 @@
     "apiName": "api",
     "functionArns": [
         {
-            "lambdaFunction": "lambda"
+            "lambdaFunction": "lambdaAPI"
         }
     ],
     "privacy": {
@@ -31,7 +31,7 @@
     "dependsOn": [
         {
             "category": "function",
-            "resourceName": "lambda",
+            "resourceName": "lambdaAPI",
             "attributes": [
                 "Name",
                 "Arn"

@@ -14,20 +14,20 @@
 		}
 	},
 	"storage": {
-		"grudges": {
+		"dynamoDB": {
 			"service": "DynamoDB",
 			"providerPlugin": "awscloudformation"
 		}
 	},
 	"function": {
-		"lambda": {
+		"lambdaAPI": {
 			"build": true,
 			"providerPlugin": "awscloudformation",
 			"service": "Lambda",
 			"dependsOn": [
 				{
 					"category": "storage",
-					"resourceName": "grudges",
+					"resourceName": "dynamoDB",
 					"attributes": [
 						"Name",
 						"Arn"
@@ -47,7 +47,7 @@
 			"dependsOn": [
 				{
 					"category": "function",
-					"resourceName": "lambda",
+					"resourceName": "lambdaAPI",
 					"attributes": [
 						"Name",
 						"Arn"

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import {API} from 'aws-amplify';
 import { GrudgeType } from '../../ts-types';
 import Grudges from '../grudges';
 import NewGrudge from '../new-grudge';
@@ -6,6 +7,12 @@ import styles from './app.module.css';
 
 const App = () => {
   const [grudges, setGrudges] = useState<GrudgeType[]>([]);
+
+  useEffect(() => {
+    API.get('api', '/grudges', {}).then(grudges => {
+      console.log(grudges);
+    })
+  }, [])
 
   const addGrudge = (grudge: GrudgeType) => {
     setGrudges([grudge, ...grudges]);
