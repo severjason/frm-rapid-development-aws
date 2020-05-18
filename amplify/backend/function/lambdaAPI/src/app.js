@@ -25,7 +25,7 @@ if(process.env.ENV && process.env.ENV !== "NONE") {
   tableName = tableName + '-' + process.env.ENV;
 }
 
-const userIdPresent = false; // TODO: update in case is required to use that definition
+const userIdPresent = true;
 const partitionKeyName = "userId";
 const partitionKeyType = "S";
 const sortKeyName = "id";
@@ -33,7 +33,8 @@ const sortKeyType = "S";
 const hasSortKey = sortKeyName !== "";
 const path = "/grudges";
 const UNAUTH = 'UNAUTH';
-const hashKeyPath = '/:' + partitionKeyName;
+const hashKeyPath = '';
+//const hashKeyPath = '/:' + partitionKeyName;
 const sortKeyPath = hasSortKey ? '/:' + sortKeyName : '';
 // declare a new express app
 var app = express()
@@ -158,7 +159,7 @@ app.put(path, function(req, res) {
       res.statusCode = 500;
       res.json({error: err, url: req.url, body: req.body});
     } else{
-      res.json({success: 'put call succeed!', url: req.url, data: data})
+      res.json({success: 'put call succeed!', url: req.url, data: req.body})
     }
   });
 });
@@ -182,7 +183,7 @@ app.post(path, function(req, res) {
       res.statusCode = 500;
       res.json({error: err, url: req.url, body: req.body});
     } else{
-      res.json({success: 'post call succeed!', url: req.url, data: data})
+      res.json({success: 'post call succeed!', url: req.url, data: req.body})
     }
   });
 });
@@ -191,7 +192,7 @@ app.post(path, function(req, res) {
 * HTTP remove method to delete object *
 ***************************************/
 
-app.delete(path + '/object' + hashKeyPath + sortKeyPath, function(req, res) {
+app.delete(path + hashKeyPath + sortKeyPath, function(req, res) {
   var params = {};
   if (userIdPresent && req.apiGateway) {
     params[partitionKeyName] = req.apiGateway.event.requestContext.identity.cognitoIdentityId || UNAUTH;
@@ -222,7 +223,7 @@ app.delete(path + '/object' + hashKeyPath + sortKeyPath, function(req, res) {
       res.statusCode = 500;
       res.json({error: err, url: req.url});
     } else {
-      res.json({url: req.url, data: data});
+      res.json({url: req.url, data: {...data, ...req.params}});
     }
   });
 });

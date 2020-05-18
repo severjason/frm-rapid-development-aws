@@ -76,7 +76,7 @@
 				"Timeout": "25",
 				"Code": {
 					"S3Bucket": "amplify-grudges-dev-175213-deployment",
-					"S3Key": "amplify-builds/lambdaAPI-723373622b566f30702f-build.zip"
+					"S3Key": "amplify-builds/lambdaAPI-63616176356e6f646237-build.zip"
 				}
 			}
 		},

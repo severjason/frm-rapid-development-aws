@@ -15,6 +15,7 @@ const Grudge: React.FC<Props> =
       <article>
         <label htmlFor={id}>
           <input
+            className={styles.checkbox}
             type="checkbox"
             checked={avenged}
             onChange={onCheckOff}

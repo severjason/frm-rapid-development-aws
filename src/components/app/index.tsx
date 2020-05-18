@@ -1,38 +1,47 @@
 import React, { useEffect, useState } from 'react';
-import {API} from 'aws-amplify';
+import { getGrudges, addGrudge, deleteGrudge, updateGrudge } from '../../api';
 import { GrudgeType } from '../../ts-types';
 import Grudges from '../grudges';
 import NewGrudge from '../new-grudge';
 import styles from './app.module.css';
 
 const App = () => {
+  const [loaded, setLoaded] = useState(false);
   const [grudges, setGrudges] = useState<GrudgeType[]>([]);
 
   useEffect(() => {
-    API.get('api', '/grudges', {}).then(grudges => {
-      console.log(grudges);
+    getGrudges().then(grudges => {
+      setGrudges(grudges);
+      setLoaded(true);
     })
   }, [])
 
-  const addGrudge = (grudge: GrudgeType) => {
-    setGrudges([grudge, ...grudges]);
+  const handleAddGrudge = (grudge: GrudgeType) => {
+    addGrudge(grudge).then((res) => {
+      setGrudges([res?.data || grudge, ...grudges]);
+    });
   };
 
-  const getFilteredGrudges = (grudge: GrudgeType) => grudges.filter(other => other.id !== grudge.id);
+  const getFilteredGrudges = (id: string) => grudges.filter(other => other.id !== id);
 
   const removeGrudge = (grudge: GrudgeType) => {
-    setGrudges(getFilteredGrudges(grudge));
+    deleteGrudge(grudge.id).then((res) => {
+      setGrudges(getFilteredGrudges(res.data.id));
+    });
   };
 
   const toggle = (grudge: GrudgeType) => {
-    const otherGrudges = getFilteredGrudges(grudge);
+    const otherGrudges = getFilteredGrudges(grudge.id);
     const updatedGrudge = {...grudge, avenged: !grudge.avenged};
-    setGrudges([updatedGrudge, ...otherGrudges]);
+    updateGrudge(updatedGrudge).then(res => {
+      setGrudges([res?.data || updatedGrudge, ...otherGrudges]);
+    });
+
   };
 
-  return (
+  return loaded ? (
     <div className={styles.app}>
-      <NewGrudge onSubmit={addGrudge}/>
+      <NewGrudge onSubmit={handleAddGrudge}/>
       <Grudges
         title="Unavenged Grudges"
         grudges={grudges.filter(grudge => !grudge.avenged)}
@@ -45,6 +54,10 @@ const App = () => {
         onCheckOff={toggle}
         onRemove={removeGrudge}
       />
+    </div>
+  ) : (
+    <div className={styles.loading}>
+      ...loading
     </div>
   );
 }
