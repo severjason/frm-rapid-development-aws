@@ -29,7 +29,6 @@ const NewGrudge: React.FC<Props> = ({onSubmit = _noop}) => {
     onSubmit({
       avenged: false,
       deed,
-      id: Date.now().toString(),
       person,
     });
 

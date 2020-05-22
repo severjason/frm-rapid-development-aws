@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { getGrudges, addGrudge, deleteGrudge, updateGrudge } from '../../api';
+import { useGrudgeSubscriptions } from '../../hooks';
 import { GrudgeType } from '../../ts-types';
+import { CreateGrudgeInput } from '../../ts-types/graphql';
 import Grudges from '../grudges';
 import NewGrudge from '../new-grudge';
 import styles from './app.module.css';
@@ -9,35 +11,22 @@ const App = () => {
   const [loaded, setLoaded] = useState(false);
   const [grudges, setGrudges] = useState<GrudgeType[]>([]);
 
+  useGrudgeSubscriptions(grudges, setGrudges);
+
   useEffect(() => {
-    getGrudges().then(grudges => {
-      setGrudges(grudges);
+    getGrudges().then((res) => {
+      const list =  res.data?.listGrudges?.items;
+      list && setGrudges(list);
       setLoaded(true);
-    })
-  }, [])
-
-  const handleAddGrudge = (grudge: GrudgeType) => {
-    addGrudge(grudge).then((res) => {
-      setGrudges([res?.data || grudge, ...grudges]);
-    });
-  };
-
-  const getFilteredGrudges = (id: string) => grudges.filter(other => other.id !== id);
-
-  const removeGrudge = (grudge: GrudgeType) => {
-    deleteGrudge(grudge.id).then((res) => {
-      setGrudges(getFilteredGrudges(res.data.id));
-    });
-  };
-
-  const toggle = (grudge: GrudgeType) => {
-    const otherGrudges = getFilteredGrudges(grudge.id);
-    const updatedGrudge = {...grudge, avenged: !grudge.avenged};
-    updateGrudge(updatedGrudge).then(res => {
-      setGrudges([res?.data || updatedGrudge, ...otherGrudges]);
     });
 
-  };
+  }, []);
+
+  const handleAddGrudge = (grudge: CreateGrudgeInput) => addGrudge(grudge);
+
+  const removeGrudge = (grudge: GrudgeType) => deleteGrudge(grudge.id);
+
+  const toggle = (grudge: GrudgeType) => updateGrudge({...grudge, avenged: !grudge.avenged});
 
   return loaded ? (
     <div className={styles.app}>
